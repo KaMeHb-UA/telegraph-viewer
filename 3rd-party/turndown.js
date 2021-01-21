@@ -58,7 +58,7 @@ function hasMeaningfulWhenBlank (node) {
 }
 
 function is (node, tagNames) {
-	return tagNames.indexOf(node.nodeName) >= 0
+	return tagNames.indexOf(node.nodeName.toUpperCase()) >= 0
 }
 
 function has (node, tagNames) {
@@ -92,7 +92,7 @@ rules.heading = {
 	filter: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
 
 	replacement: function (content, node, options) {
-		var hLevel = Number(node.nodeName.charAt(1));
+		var hLevel = Number(node.nodeName.toUpperCase().charAt(1));
 
 		if (options.headingStyle === 'setext' && hLevel < 3) {
 			var underline = repeat((hLevel === 1 ? '=' : '-'), content.length);
@@ -120,7 +120,7 @@ rules.list = {
 
 	replacement: function (content, node) {
 		var parent = node.parentNode;
-		if (parent.nodeName === 'LI' && parent.lastElementChild === node) {
+		if (parent.nodeName.toUpperCase() === 'LI' && parent.lastElementChild === node) {
 			return '\n' + content
 		} else {
 			return '\n\n' + content + '\n\n'
@@ -138,7 +138,7 @@ rules.listItem = {
 			.replace(/\n/gm, '\n    '); // indent
 		var prefix = options.bulletListMarker + '   ';
 		var parent = node.parentNode;
-		if (parent.nodeName === 'OL') {
+		if (parent.nodeName.toUpperCase() === 'OL') {
 			var start = parent.getAttribute('start');
 			var index = Array.prototype.indexOf.call(parent.children, node);
 			prefix = (start ? Number(start) + index : index + 1) + '.  ';
@@ -153,9 +153,9 @@ rules.indentedCodeBlock = {
 	filter: function (node, options) {
 		return (
 			options.codeBlockStyle === 'indented' &&
-			node.nodeName === 'PRE' &&
+			node.nodeName.toUpperCase() === 'PRE' &&
 			node.firstChild &&
-			node.firstChild.nodeName === 'CODE'
+			node.firstChild.nodeName.toUpperCase() === 'CODE'
 		)
 	},
 
@@ -172,9 +172,9 @@ rules.fencedCodeBlock = {
 	filter: function (node, options) {
 		return (
 			options.codeBlockStyle === 'fenced' &&
-			node.nodeName === 'PRE' &&
+			node.nodeName.toUpperCase() === 'PRE' &&
 			node.firstChild &&
-			node.firstChild.nodeName === 'CODE'
+			node.firstChild.nodeName.toUpperCase() === 'CODE'
 		)
 	},
 
@@ -216,7 +216,7 @@ rules.inlineLink = {
 	filter: function (node, options) {
 		return (
 			options.linkStyle === 'inlined' &&
-			node.nodeName === 'A' &&
+			node.nodeName.toUpperCase() === 'A' &&
 			node.getAttribute('href')
 		)
 	},
@@ -233,7 +233,7 @@ rules.referenceLink = {
 	filter: function (node, options) {
 		return (
 			options.linkStyle === 'referenced' &&
-			node.nodeName === 'A' &&
+			node.nodeName.toUpperCase() === 'A' &&
 			node.getAttribute('href')
 		)
 	},
@@ -297,9 +297,9 @@ rules.strong = {
 rules.code = {
 	filter: function (node) {
 		var hasSiblings = node.previousSibling || node.nextSibling;
-		var isCodeBlock = node.parentNode.nodeName === 'PRE' && !hasSiblings;
+		var isCodeBlock = node.parentNode.nodeName.toUpperCase() === 'PRE' && !hasSiblings;
 
-		return node.nodeName === 'CODE' && !isCodeBlock
+		return node.nodeName.toUpperCase() === 'CODE' && !isCodeBlock
 	},
 
 	replacement: function (content) {
@@ -406,9 +406,9 @@ function findRule (rules, node, options) {
 function filterValue (rule, node, options) {
 	var filter = rule.filter;
 	if (typeof filter === 'string') {
-		if (filter === node.nodeName.toLowerCase()) return true
+		if (filter === node.nodeName.toUpperCase().toLowerCase()) return true
 	} else if (Array.isArray(filter)) {
-		if (filter.indexOf(node.nodeName.toLowerCase()) > -1) return true
+		if (filter.indexOf(node.nodeName.toUpperCase().toLowerCase()) > -1) return true
 	} else if (typeof filter === 'function') {
 		if (filter.call(rule, node, options)) return true
 	} else {
@@ -453,7 +453,7 @@ function collapseWhitespace (options) {
 	var isBlock = options.isBlock;
 	var isVoid = options.isVoid;
 	var isPre = options.isPre || function (node) {
-		return node.nodeName === 'PRE'
+		return node.nodeName.toUpperCase() === 'PRE'
 	};
 
 	if (!element.firstChild || isPre(element)) return
@@ -483,7 +483,7 @@ function collapseWhitespace (options) {
 
 			prevText = node;
 		} else if (node.nodeType === 1) { // Node.ELEMENT_NODE
-			if (isBlock(node) || node.nodeName === 'BR') {
+			if (isBlock(node) || node.nodeName.toUpperCase() === 'BR') {
 				if (prevText) {
 					prevText.data = prevText.data.replace(/ $/, '');
 				}
@@ -555,6 +555,7 @@ function RootNode (input) {
 			'<x-turndown id="turndown-root">' + input + '</x-turndown>',
 			'text/html'
 		);
+		console.log(doc);
 		root = doc.getElementById('turndown-root');
 	} else {
 		root = input.cloneNode(true);
@@ -576,7 +577,7 @@ function htmlParser () {
 
 function Node (node) {
 	node.isBlock = isBlock(node);
-	node.isCode = node.nodeName.toLowerCase() === 'code' || node.parentNode.isCode;
+	node.isCode = node.nodeName.toUpperCase().toLowerCase() === 'code' || node.parentNode.isCode;
 	node.isBlank = isBlank(node);
 	node.flankingWhitespace = flankingWhitespace(node);
 	return node
