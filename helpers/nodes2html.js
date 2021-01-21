@@ -5,7 +5,7 @@ function htmle(str){
 }
 
 function nodeToHtml(node){
-	if(typeof node === 'string') return htmle(node);
+	if(typeof node === 'string') return node.split('\n').map(htmle).join('<br/>');
 	let html = `<${node.tag} `;
 	if(node.attrs) for(const name in node.attrs) html += `${name}="${htmle(node.attrs[name])}" `;
 	html += '>';
