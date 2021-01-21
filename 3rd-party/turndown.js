@@ -555,7 +555,6 @@ function RootNode (input) {
 			'<x-turndown id="turndown-root">' + input + '</x-turndown>',
 			'text/html'
 		);
-		console.log(doc);
 		root = doc.getElementById('turndown-root');
 	} else {
 		root = input.cloneNode(true);
