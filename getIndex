@@ -1,0 +1,25 @@
+{
+	"data": {
+		"type": "page",
+		"title": "Telegra.ph viewer",
+		"themeColor": "#4b73a7",
+		"icon": "https://telegra.ph/images/logo.png",
+		"dummy": true,
+		"children": [
+			{
+				"type": "module",
+				"url": "./index.js"
+			},
+			{
+				"type": "dynamic",
+				"update": {
+					"action": "getPage",
+					"args": [ "main" ]
+				},
+				"default": [ "" ],
+				"silent": true,
+				"interval": 100
+			}
+		]
+	}
+}
